@@ -1,9 +1,19 @@
 //importするものをまとめているファイルをインポート
 import 'package:pre_challenge/state/import.dart';
+import 'parts/home_parts.dart';
 
 void main() {
-  //Providerに監視させる
-  runApp(const ProviderScope(child: MyApp()));
+  //flutterの初期化
+  WidgetsFlutterBinding.ensureInitialized();
+  //画面を縦向きに固定
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((_){
+    //Providerに監視させる
+    runApp(const ProviderScope(child: MyApp()));
+  });
+  
 }
 
 //ホーム画面の大まかなテーマなどを作成するWidget
@@ -41,13 +51,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 Widget Home() {
   return Container(
     //縦方向にコンテンツを並べる
-    child: Column(
-      children: [
-        //横方向にラベルを並べる(ドラッグと選択を可能にする)
+    child: Column(children: [
+      //横方向にラベルを並べる(ドラッグと選択を可能にする)
+      Consumer(builder: (context, ref, child) {
+        //ラベルを読み込む(更新されたらウィジェットごと更新する)
+        List label_list = ref.watch(labelProvider);
+        //ラベルを表示するパーツに受け渡す。
+        return parts().label_bar(label_list);
+      }),
 
-        //センタぃされたラベルに合わせたコンテンツを表示する。
-
-      ]
-      ),
+      //センタぃされたラベルに合わせたコンテンツを表示する。
+    ]),
   );
 }
