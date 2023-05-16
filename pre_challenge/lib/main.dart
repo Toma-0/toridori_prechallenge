@@ -27,6 +27,19 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      body: Home(),
+    );
   }
+}
+
+Widget Home() {
+  return Container(
+    child: Column(
+      children: [
+        //縦方向に
+      ]
+      ),
+  );
 }
