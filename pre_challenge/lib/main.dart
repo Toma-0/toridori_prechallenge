@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+//importするものをまとめているファイルをインポート
+import 'package:pre_challenge/state/import.dart';
 
 void main() {
   //Providerに監視させる
