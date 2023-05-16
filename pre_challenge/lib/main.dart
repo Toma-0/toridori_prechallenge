@@ -9,11 +9,10 @@ void main() {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
-  ]).then((_){
+  ]).then((_) {
     //Providerに監視させる
     runApp(const ProviderScope(child: MyApp()));
   });
-  
 }
 
 //ホーム画面の大まかなテーマなどを作成するWidget
@@ -23,27 +22,69 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // ライトモード用のテーマ
+      theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        textTheme: const TextTheme(),
+      ),
+      //ダーク用のテーマ
+      darkTheme: ThemeData(
+        scaffoldBackgroundColor: Colors.black,
+      ),
+      // システムのテーマモードに合わせる
+      themeMode: ThemeMode.system,
       home: const MyStatefulWidget(),
     );
   }
 }
 
 //ホーム画面の動的な部分を作成するWidget
-class MyStatefulWidget extends StatefulWidget {
+class MyStatefulWidget extends ConsumerStatefulWidget {
   const MyStatefulWidget({Key? key}) : super(key: key);
 
   @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  ConsumerState<MyStatefulWidget> createState() => _MyStatefulWidgetState();
 }
 
 //ホーム画面の動的な部分の状態を管理するWidget
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      //AppBarを生成しない
-      extendBodyBehindAppBar: true,
-      body: Home(),
+    //ラベルのリストを読み込む
+    List list = ref.watch(labelProvider);
+
+    //ラベルよりタブのパーツを取得する
+    List<Widget> tab = parts().label_bar(list, context);
+    return SafeArea(
+      child: DefaultTabController(
+        length: tab.length,
+        child: Scaffold(
+          backgroundColor: Color.fromARGB(255, 237, 237, 237),
+          //AppBarを生成しない
+          extendBodyBehindAppBar: true,
+          //タブバーとボタンを重ねる
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            //タブバーとボタンを重ねる
+            child: Stack(
+              children: [
+                TabBar(
+              tabs: tab,
+              isScrollable: true,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.black,
+            ),
+            Align(
+              alignment: AlignmentDirectional.topEnd,
+              child: IconButton(onPressed: (){}, icon: Icon(Icons.settings)),
+            )
+              ],
+            )
+            
+          ),
+          body: Home(),
+        ),
+      ),
     );
   }
 }
@@ -53,12 +94,6 @@ Widget Home() {
     //縦方向にコンテンツを並べる
     child: Column(children: [
       //横方向にラベルを並べる(ドラッグと選択を可能にする)
-      Consumer(builder: (context, ref, child) {
-        //ラベルを読み込む(更新されたらウィジェットごと更新する)
-        List label_list = ref.watch(labelProvider);
-        //ラベルを表示するパーツに受け渡す。
-        return parts().label_bar(label_list);
-      }),
 
       //センタぃされたラベルに合わせたコンテンツを表示する。
     ]),
