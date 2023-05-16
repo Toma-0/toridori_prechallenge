@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod/riverpod.dart';
+
 void main() {
   //Providerに監視させる
   runApp(const ProviderScope(child: MyApp()));
@@ -46,7 +46,7 @@ Widget Home() {
         //横方向にラベルを並べる(ドラッグと選択を可能にする)
 
         //センタぃされたラベルに合わせたコンテンツを表示する。
-        
+
       ]
       ),
   );
