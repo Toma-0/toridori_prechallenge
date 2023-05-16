@@ -1,22 +1,24 @@
-import 'package:flutter/material.dart';
+//importするものをまとめているファイルをインポート
+import 'package:pre_challenge/state/import.dart';
 
 void main() {
-  runApp(const MyApp());
+  //Providerに監視させる
+  runApp(const ProviderScope(child: MyApp()));
 }
 
+//ホーム画面の大まかなテーマなどを作成するWidget
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-  static const String _title = 'Pre Challenge';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: _title,
       home: const MyStatefulWidget(),
     );
   }
 }
 
+//ホーム画面の動的な部分を作成するWidget
 class MyStatefulWidget extends StatefulWidget {
   const MyStatefulWidget({Key? key}) : super(key: key);
 
@@ -24,10 +26,12 @@ class MyStatefulWidget extends StatefulWidget {
   State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
 }
 
+//ホーム画面の動的な部分の状態を管理するWidget
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //AppBarを生成しない
       extendBodyBehindAppBar: true,
       body: Home(),
     );
@@ -36,9 +40,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
 Widget Home() {
   return Container(
+    //縦方向にコンテンツを並べる
     child: Column(
       children: [
-        //縦方向に
+        //横方向にラベルを並べる(ドラッグと選択を可能にする)
+
+        //センタぃされたラベルに合わせたコンテンツを表示する。
+
       ]
       ),
   );
