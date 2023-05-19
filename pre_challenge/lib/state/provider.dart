@@ -15,3 +15,6 @@ final StateProvider<int> labelIndexProvider = StateProvider((ref) => ref.watch(l
 //お気に入りが格納されているStateNotiferProvider
 
 //表示するコンテンツが含まれているFutureProvider
+
+
+

@@ -131,7 +131,11 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
               for (var i = 0; i < list.length; i++)
                 ListTile(
                   title: Text(list[i]),
-                  onTap: () {},
+                  onTap: () {
+                    _tabController.animateTo(i);
+                    //メニューを閉じる
+                    _scaffoldKey.currentState?.closeEndDrawer();
+                  },
                 ),
             ],
           ).toList(),
