@@ -53,17 +53,16 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TabController _tabController;
   //ラベルのリストを読み込む
-  late List list;
+
   final TextEditingController textFieldController = TextEditingController();
   String label = "";
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final labelList = ref.read(labelProvider);
       setState(() {
-        list = labelList;
-        _tabController = TabController(length: list.length, vsync: this);
+        _tabController =
+            TabController(length: ref.watch(labelProvider).length, vsync: this);
       });
     });
   }
@@ -78,10 +77,11 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   Widget build(BuildContext context) {
     Setting().size(context);
     double y = Setting.h!;
-    list = ref.watch(labelProvider);
-    _tabController = TabController(length: list.length, vsync: this);
+    List labelList = ref.watch(labelProvider);
+    _tabController =
+        TabController(length: ref.watch(labelProvider).length, vsync: this);
     //ラベルよりタブのパーツを取得する
-    List<Widget> tab = parts().label_bar(list, context);
+    List<Widget> tab = parts().label_bar(ref.watch(labelProvider), context);
     return DefaultTabController(
       length: tab.length,
       child: Scaffold(
@@ -98,13 +98,15 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
             //タブバーとボタンを重ねる
             child: Stack(
               children: [
-                TabBar(
-                  controller: _tabController,
-                  tabs: tab,
-                  isScrollable: true,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.black,
-                ),
+                Consumer(builder: (context, ref, child) {
+                  return TabBar(
+                    controller: _tabController,
+                    tabs: tab,
+                    isScrollable: true,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.black,
+                  );
+                }),
                 //設定ボタンを右上に表示させる
                 Align(
                     alignment: AlignmentDirectional.topEnd,
@@ -124,82 +126,90 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
             ),
           ),
         ),
-        endDrawer: Drawer(
-          child: ListView(
-            children: ListTile.divideTiles(
-              context: context,
-              tiles: [
-                for (var i = 0; i < list.length; i++)
-                  SizedBox(
-                      child: ListTile(
-                          title: Text(list[i]),
-                          onTap: () {
-                            _tabController.animateTo(i);
-                            //メニューを閉じる
-                            _scaffoldKey.currentState?.closeEndDrawer();
-                          })),
-                ListTile(
-                  title: SizedBox(
-                    height: y * 0.1,
-                    child: Column(
-                      children: [
-                        Expanded(
-                            child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.0),
-                          child: TextField(
-                            controller: textFieldController,
-                            decoration: InputDecoration(
-                              
-                              label: Text(
-                                "ラベルを追加",
-                                style: TextStyle(color: Colors.grey),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(3),
-                                borderSide: BorderSide(),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(3),
-                                borderSide: BorderSide(
-                                  color: Colors.blue,
+
+        endDrawer: Drawer(child: Consumer(
+          builder: (context, ref, child) {
+            return ListView(
+              children: ListTile.divideTiles(
+                context: context,
+                tiles: [
+                  for (var i = 0; i < ref.watch(labelProvider).length; i++)
+                    SizedBox(
+                        child: ListTile(
+                            title: Text(ref.watch(labelProvider)[i]),
+                            onTap: () {
+                              _tabController.animateTo(i);
+                              //メニューを閉じる
+                              _scaffoldKey.currentState?.closeEndDrawer();
+                            })),
+                  ListTile(
+                    title: SizedBox(
+                      height: y * 0.1,
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            child: TextField(
+                              controller: textFieldController,
+                              decoration: InputDecoration(
+                                label: Text(
+                                  "ラベルを追加",
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(3),
+                                  borderSide: BorderSide(),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(3),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                  ),
                                 ),
                               ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter(
+                                    RegExp(r'^[a-zA-Z0-9\-_]+$'),
+                                    allow: true), // 英数字、ハイフン、アンダースコアのみ許可
+                                LengthLimitingTextInputFormatter(
+                                    50), // 最大50文字まで入力可
+                              ],
+                              onChanged: (text) {
+                                label = text;
+                              },
                             ),
-                            inputFormatters: [
-                              FilteringTextInputFormatter(
-                                  RegExp(r'^[a-zA-Z0-9\-_]+$'),
-                                  allow: true), // 英数字、ハイフン、アンダースコアのみ許可
-                              LengthLimitingTextInputFormatter(
-                                  50), // 最大50文字まで入力可
-                            ],
-                            onChanged: (text) {
-                              label = text;
-                            },
-                          ),
-                        )),
-                        ElevatedButton(
-                            onPressed: () {
-                              //Providerの更新
-                            },
-                            child: Text("追加")),
-                      ],
+                          )),
+                          ElevatedButton(
+                              onPressed: () {
+                                //Providerの更新
+                                ref.read(labelProvider.notifier).addLabel(label);
+                                textFieldController.clear();
+                              },
+                              child: Text("追加")),
+                        ],
+                      ),
                     ),
+                    contentPadding: EdgeInsets.only(
+                        top: (y * 0.9 -
+                            (ref.watch(labelProvider).length + 1) *
+                                (y * 0.05))),
                   ),
-                  contentPadding: EdgeInsets.only(
-                      top: (y * 0.9 - (list.length + 1) * (y * 0.05))),
-                ),
-              ],
-            ).toList(),
-          ),
-        ),
-        body: Home(list, _tabController),
+                ],
+              ).toList(),
+            );
+          },
+        )),
+        body: Home(ref.watch(labelProvider), _tabController),
       ),
     );
   }
 }
 
 Widget Home(list, tabCon) {
-  return TabBarView(controller: tabCon, children: [
-    for (int i = 0; i < list.length; i++) Center(child: Text(list[i])),
-  ]);
+  return Consumer(builder: (context, watch, child) {
+    return TabBarView(controller: tabCon, children: [
+      for (int i = 0; i < list.length; i++) Center(child: Text(list[i])),
+    ]);
+  });
 }
