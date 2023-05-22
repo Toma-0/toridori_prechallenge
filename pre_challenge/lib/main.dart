@@ -54,7 +54,8 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   late TabController _tabController;
   //ラベルのリストを読み込む
   late List list;
-
+  final TextEditingController textFieldController = TextEditingController();
+  String label = "";
   @override
   void initState() {
     super.initState();
@@ -124,22 +125,73 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
           ),
         ),
         endDrawer: Drawer(
-            child: ListView(
-          children: ListTile.divideTiles(
-            context: context,
-            tiles: [
-              for (var i = 0; i < list.length; i++)
+          child: ListView(
+            children: ListTile.divideTiles(
+              context: context,
+              tiles: [
+                for (var i = 0; i < list.length; i++)
+                  SizedBox(
+                      child: ListTile(
+                          title: Text(list[i]),
+                          onTap: () {
+                            _tabController.animateTo(i);
+                            //メニューを閉じる
+                            _scaffoldKey.currentState?.closeEndDrawer();
+                          })),
                 ListTile(
-                  title: Text(list[i]),
-                  onTap: () {
-                    _tabController.animateTo(i);
-                    //メニューを閉じる
-                    _scaffoldKey.currentState?.closeEndDrawer();
-                  },
+                  title: SizedBox(
+                    height: y * 0.1,
+                    child: Column(
+                      children: [
+                        Expanded(
+                            child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: TextField(
+                            controller: textFieldController,
+                            decoration: InputDecoration(
+                              
+                              label: Text(
+                                "ラベルを追加",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(3),
+                                borderSide: BorderSide(),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(3),
+                                borderSide: BorderSide(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter(
+                                  RegExp(r'^[a-zA-Z0-9\-_]+$'),
+                                  allow: true), // 英数字、ハイフン、アンダースコアのみ許可
+                              LengthLimitingTextInputFormatter(
+                                  50), // 最大50文字まで入力可
+                            ],
+                            onChanged: (text) {
+                              label = text;
+                            },
+                          ),
+                        )),
+                        ElevatedButton(
+                            onPressed: () {
+                              //Providerの更新
+                            },
+                            child: Text("追加")),
+                      ],
+                    ),
+                  ),
+                  contentPadding: EdgeInsets.only(
+                      top: (y * 0.9 - (list.length + 1) * (y * 0.05))),
                 ),
-            ],
-          ).toList(),
-        )),
+              ],
+            ).toList(),
+          ),
+        ),
         body: Home(list, _tabController),
       ),
     );
