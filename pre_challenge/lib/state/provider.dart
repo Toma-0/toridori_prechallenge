@@ -3,7 +3,7 @@ import 'import.dart';
 
 //ラベルが格納されているStateProvider
 
-class labelNotifier extends Notifier<List> {
+class LabelNotifier extends Notifier<List> {
 @override
   List build() => [
     "全て",
@@ -15,16 +15,16 @@ class labelNotifier extends Notifier<List> {
   ];
 
   void addLabel(String label) {
-    state.add(label);
+    state = [...state, label];
   }
 
   void removeLabel(String label) {
-    state.remove(label);
+    state = state.where((element) => element != label).toList();
   }
 
 }
 
-final labelProvider = NotifierProvider<labelNotifier ,List>(()=>labelNotifier());
+final labelProvider = NotifierProvider<LabelNotifier ,List>(()=>LabelNotifier());
 
 //お気に入りが格納されているStateNotiferProvider
 

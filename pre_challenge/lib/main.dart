@@ -1,7 +1,6 @@
 //importするものをまとめているファイルをインポート
 import 'package:pre_challenge/state/import.dart';
 import 'package:pre_challenge/state/setting.dart';
-import 'parts/home_parts.dart';
 
 void main() {
   //flutterの初期化
@@ -44,11 +43,11 @@ class MyStatefulWidget extends ConsumerStatefulWidget {
   const MyStatefulWidget({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<MyStatefulWidget> createState() => _MyStatefulWidgetState();
+  ConsumerState<MyStatefulWidget> createState() => MyStatefulWidgetState();
 }
 
 //ホーム画面の動的な部分の状態を管理するWidget
-class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
+class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
     with TickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TabController _tabController;
@@ -77,11 +76,17 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   Widget build(BuildContext context) {
     Setting().size(context);
     double y = Setting.h!;
-    List labelList = ref.watch(labelProvider);
+
     _tabController =
         TabController(length: ref.watch(labelProvider).length, vsync: this);
     //ラベルよりタブのパーツを取得する
-    List<Widget> tab = parts().label_bar(ref.watch(labelProvider), context);
+    List<Widget> tab = [
+      for (var i = 0; i < ref.watch(labelProvider).length; i++)
+        Tab(
+          text: ref.watch(labelProvider)[i],
+        )
+    ];
+
     return DefaultTabController(
       length: tab.length,
       child: Scaffold(
@@ -183,7 +188,9 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                           ElevatedButton(
                               onPressed: () {
                                 //Providerの更新
-                                ref.read(labelProvider.notifier).addLabel(label);
+                                ref
+                                    .read(labelProvider.notifier)
+                                    .addLabel(label);
                                 textFieldController.clear();
                               },
                               child: Text("追加")),
@@ -206,10 +213,17 @@ class _MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   }
 }
 
-Widget Home(list, tabCon) {
-  return Consumer(builder: (context, watch, child) {
-    return TabBarView(controller: tabCon, children: [
-      for (int i = 0; i < list.length; i++) Center(child: Text(list[i])),
-    ]);
-  });
+class Home extends ConsumerWidget {
+  final List list;
+  final TabController tabCon;
+  const Home(this.list, this.tabCon, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, watch) {
+    return Consumer(builder: (context, watch, child) {
+      return TabBarView(controller: tabCon, children: [
+        for (int i = 0; i < list.length; i++) Center(child: Text(list[i])),
+      ]);
+    });
+  }
 }
