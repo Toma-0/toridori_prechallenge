@@ -1,7 +1,8 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
+import '../state/provider.dart';
 
 class GraphQL {
-  void getIssues() async {
+  void getIssues(ref) async {
     // 1. GitHub GraphQL APIのエンドポイントを指定してHttpLinkを作成
     final HttpLink httpLink = HttpLink(
       'https://api.github.com/graphql',
@@ -10,8 +11,16 @@ class GraphQL {
     // 2. アクセストークンを指定して認証リンクを作成
     final AuthLink authLink = AuthLink(
         getToken: () async =>
-            'Bearer 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'
-        );
+            'Bearer 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');
+
+    //後ほど使用するMapを作成
+    Map<String, List<dynamic>> mapData = {
+      "number": [],
+      "title": [],
+      "body": [],
+      "author": [],
+      "comments": [],
+    };
 
     // 3. 認証リンクとHTTPリンクを連結して最終的なリンクを作成
     final Link link = authLink.concat(httpLink);
@@ -36,28 +45,19 @@ class GraphQL {
     } else {
       // データを解析して表示
       final data = result.data!['repository']['issues']['nodes'];
+
       for (var issue in data) {
-        final number = issue['number'];
-        final title = issue['title'];
-        final body = issue['body'];
-        final author = issue['author']['login'];
-        final comments = issue['comments']['nodes'];
-
-        // イシューの情報を出力
-        print('Issue Number: $number');
-        print('Title: $title');
-        print('Body: $body');
-        print('Author: $author');
-
-        // コメントを出力
-        print('Comments:');
-        for (var comment in comments) {
-          final commentBody = comment['body'];
-          print(commentBody);
-        }
-
-        print('----------------------');
+        //先ほど作成したMapにデータを格納
+        mapData["number"]!.add(issue['number']);
+        mapData["title"]!.add(issue['title']);
+        mapData["body"]!.add(issue['body']);
+        mapData["author"]!.add(issue['author']['login']);
+        mapData["comments"]!.add(issue['comments']['nodes']);
       }
+
+      //取得したデータをProviderに格納
+      ref.read(IssueProvider.notifier).addIssues(mapData);
+      print(ref.read(IssueProvider));
     }
   }
 

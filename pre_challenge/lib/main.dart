@@ -17,11 +17,12 @@ void main() {
 }
 
 //ホーム画面の大まかなテーマなどを作成するWidget
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,ref) {
+    GraphQL().getIssues(ref);
     return MaterialApp(
       // ライトモード用のテーマ
       theme: ThemeData(
@@ -75,10 +76,10 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
 
   @override
   Widget build(BuildContext context) {
+    
     Setting().size(context);
     double y = Setting.h!;
     //グラフQLを取得する
-    GraphQL().getIssues();
     _tabController =
         TabController(length: ref.watch(labelProvider).length, vsync: this);
     //ラベルよりタブのパーツを取得する
@@ -209,22 +210,29 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
             );
           },
         )),
-        body: Home(ref.watch(labelProvider), _tabController),
+        body: Home(ref, _tabController),
       ),
     );
   }
 }
 
 class Home extends ConsumerWidget {
-  final List list;
+  final WidgetRef ref;
   final TabController tabCon;
-  const Home(this.list, this.tabCon, {Key? key}) : super(key: key);
+  const Home(this.ref, this.tabCon, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, watch) {
     return Consumer(builder: (context, watch, child) {
       return TabBarView(controller: tabCon, children: [
-        for (int i = 0; i < list.length; i++) Center(child: Text(list[i])),
+        for (int i = 0; i < ref.watch(labelProvider).length; i++)
+          Center(
+              child: Column(
+            children: [
+              Text(ref.watch(labelProvider)[i]),
+              Text(ref.watch(IssueProvider).toString()),
+            ],
+          )),
       ]);
     });
   }
