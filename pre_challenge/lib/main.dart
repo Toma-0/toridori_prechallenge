@@ -1,6 +1,7 @@
 //importするものをまとめているファイルをインポート
 import 'package:pre_challenge/state/import.dart';
 import 'package:pre_challenge/state/setting.dart';
+import "graphql/getInfo.dart";
 
 void main() {
   //flutterの初期化
@@ -76,7 +77,8 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   Widget build(BuildContext context) {
     Setting().size(context);
     double y = Setting.h!;
-
+    //グラフQLを取得する
+    GraphQL().getIssues();
     _tabController =
         TabController(length: ref.watch(labelProvider).length, vsync: this);
     //ラベルよりタブのパーツを取得する
