@@ -228,9 +228,10 @@ class Home extends ConsumerWidget {
         for (int i = 0; i < ref.watch(labelProvider).length; i++)
           Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(ref.watch(labelProvider)[i]),
-              Text(ref.watch(IssueProvider).toString()),
+              Text(ref.watch(IssueProvider)["title"][i].toString()),
             ],
           )),
       ]);

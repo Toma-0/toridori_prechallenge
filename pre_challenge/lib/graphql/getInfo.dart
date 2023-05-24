@@ -1,5 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../state/provider.dart';
+import 'accessToken.dart';
 
 class GraphQL {
   void getIssues(ref) async {
@@ -9,9 +10,10 @@ class GraphQL {
     );
 
     // 2. アクセストークンを指定して認証リンクを作成
+    String token=Token.token;
     final AuthLink authLink = AuthLink(
         getToken: () async =>
-            'Bearer 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');
+            'Bearer $token');
 
     //後ほど使用するMapを作成
     Map<String, List<dynamic>> mapData = {
