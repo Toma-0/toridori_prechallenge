@@ -3,7 +3,7 @@ import '../contents.dart';
 
 class Parts {
 //上部にあるスライド選択可能なパーツを作成する
-  List<Widget> label_bar(list, context) {
+  List<Widget> labelBar(list, context) {
     //タブのリストを作成する
     final List<Widget> tabs = <Tab>[];
     for (var i = 0; i < list.length; i++)
@@ -19,6 +19,8 @@ class Parts {
   Widget contentCard(
       context, int index, number, List comments, title, createdAt, body) {
     Setting().size(context);
+
+    ///日付を取得する
     RegExp regex = RegExp(r'^(\d{4})-(\d{2})-(\d{2})');
     RegExpMatch? match = regex.firstMatch(createdAt);
     late String? year;
@@ -31,14 +33,17 @@ class Parts {
       day = match.group(3);
     }
 
+    //カードを作成する
     return Card(
         child: Padding(
       padding: EdgeInsets.all(Setting.w! * 0.01),
       child: Column(
+        //左寄せにする
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
+              //番号を表示する
               Text("No.$number",
                   style: Theme.of(context).textTheme.labelMedium),
               Padding(
@@ -47,6 +52,7 @@ class Parts {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  //コメントのアイコンを表示する
                   Icon(
                     Icons.comment,
                     size: Setting.w! * 0.02,
@@ -54,6 +60,7 @@ class Parts {
                         ? Colors.white
                         : Colors.black,
                   ),
+                  //コメントの数を表示する
                   Padding(
                     padding: EdgeInsets.only(left: Setting.w! * 0.01),
                     child: Text(
@@ -65,13 +72,16 @@ class Parts {
               ),
             ],
           ),
+          //タイトルを表示する
           Padding(
             padding: EdgeInsets.symmetric(vertical: Setting.w! * 0.01),
             child: Row(
               children: [
+                //アイコンを表示する
                 Icon(Icons.info_outline, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: Setting.w! * 0.01),
+                  //テキストを幅を指定して表示する
                   child: SizedBox(
                     width: Setting.w! * 0.45,
                     child: Text(
@@ -84,6 +94,7 @@ class Parts {
               ],
             ),
           ),
+          //本文を表示する場所を作成する
           DecoratedBox(
               decoration: BoxDecoration(
                   //角丸にする
@@ -91,6 +102,7 @@ class Parts {
                   color: Theme.of(context).brightness == Brightness.dark
                       ? Color.fromARGB(255, 81, 107, 125)
                       : Color.fromARGB(255, 236, 247, 255)),
+              //本文を表示する
               child: Padding(
                   padding: EdgeInsets.all(Setting.w! * 0.01),
                   child: Text(
@@ -99,6 +111,7 @@ class Parts {
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ))),
+          //日付を表示する
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,6 +123,7 @@ class Parts {
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
               ),
+              //コンテンツを広げるためのボタンを表示する
               Align(
                 alignment: Alignment.bottomRight,
                 child: OutlinedButton(
@@ -124,9 +138,11 @@ class Parts {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Contents(index:index)),
+                      MaterialPageRoute(
+                          builder: (context) => Contents(index: index)),
                     );
                   },
+                  //ボタンのテキストを表示する
                   child: Text(
                     "View full issue",
                     style: Theme.of(context).textTheme.bodyMedium,

@@ -1,6 +1,6 @@
 //importするものをまとめているファイルをインポート
 import 'package:pre_challenge/state/import.dart';
-import 'package:pre_challenge/state/setting.dart';
+import 'package:pre_challenge/visual/size.dart';
 import "graphql/getInfo.dart";
 import 'package:flutter/material.dart';
 import "parts/home_parts.dart";
@@ -26,110 +26,46 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     GraphQL().getIssues(ref);
     Setting().size(context);
+    ThemaText().lightThemeText(context);
+    ThemaText().darkThemeText(context);
+    WidgetTheme().lighteWidgetTheme();
+    WidgetTheme().darkWidgetTheme();
     return MaterialApp(
       // ライトモード用のテーマ
       theme: ThemeData(
         //アプリバーのテーマ
-        appBarTheme: AppBarTheme(
-          color: Color.fromARGB(255, 237, 237, 237),
-          elevation: 0,
-          iconTheme: IconThemeData(
-            color: Colors.black,
-          ),
-        ),
-
-        //アクセント部分のテーマ
-        primaryColor: Colors.blue,
-
-        //背景色のテーマ
-        canvasColor: Color.fromARGB(255, 237, 237, 237),
-        scaffoldBackgroundColor: Color.fromARGB(255, 237, 237, 237),
-        bottomAppBarTheme: BottomAppBarTheme(
-          color: Color.fromARGB(255, 237, 237, 237),
-        ),
-
+        appBarTheme: WidgetTheme.appBarLightTheme,
+        //ボトムアプリバーのテーマ
+        bottomAppBarTheme: WidgetTheme.bottomAppBarLightTheme,
         //カードテーマ
-        cardTheme: CardTheme(
-          color: Colors.white,
-          shadowColor: Colors.black,
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          margin: EdgeInsets.all(Setting.w! * 0.02),
-        ),
-        textTheme: const TextTheme(
-          titleMedium: TextStyle(
-            color: Colors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-          labelMedium: TextStyle(
-            color: Color.fromARGB(255, 70, 70, 70),
-            fontSize: 12,
-          ),
-          labelSmall: TextStyle(
-            color: Colors.black,
-            fontSize: 10,
-            wordSpacing: 1.5,
-          ),
-          bodyMedium: TextStyle(
-            color: Color.fromARGB(255, 124, 124, 124),
-            fontSize: 12,
-            height: 1.5,
-          ),
-          bodySmall: TextStyle(
-            color: Colors.black,
-            fontSize: 10,
-          ),
-        ),
+        cardTheme: WidgetTheme.cardLightTheme,
+        //テキストテーマ
+        textTheme: ThemaText.light,
+
+        //アクセント部分の背景色
+        primaryColor: Colors.blue,
+        //ウィジェットの背景色
+        canvasColor: Color.fromARGB(255, 237, 237, 237),
+        //全体の背景色
+        scaffoldBackgroundColor: Color.fromARGB(255, 237, 237, 237),
       ),
+
       //ダーク用のテーマ
       darkTheme: ThemeData(
-        appBarTheme: AppBarTheme(
-          color: Colors.black,
-          elevation: 0,
-          iconTheme: IconThemeData(
-            color: const Color.fromARGB(255, 255, 255, 255),
-          ),
-        ),
-
+        //アプリバーのテーマ
+        appBarTheme: WidgetTheme.appBarDarkTheme,
+        //ボトムアプリバーのテーマ
+        bottomAppBarTheme: WidgetTheme.bottomAppBarDarkTheme,
+        //カードののテーマ
+        cardTheme: WidgetTheme.cardDarkTheme,
+        //テキストのテーマ
+        textTheme: ThemaText.dark,
         //アクセント部分のテーマ
         primaryColor: Colors.blue,
-
-        //背景色のテーマ
+        //ウィジェットの背景色
         canvasColor: const Color.fromARGB(255, 106, 106, 106),
+        //全体の背景色
         scaffoldBackgroundColor: const Color.fromARGB(255, 106, 106, 106),
-        bottomAppBarTheme: BottomAppBarTheme(color: const Color.fromARGB(255, 106, 106, 106)),
-
-        //カードの背景のテーマ
-        cardColor: Colors.black,
-
-        textTheme: const TextTheme(
-          titleMedium: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
-          labelMedium: TextStyle(
-            color: Color.fromARGB(255, 245, 245, 245),
-            fontSize: 13
-          ),
-          labelSmall: TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-            wordSpacing: 1.5,
-          ),
-          bodyMedium: TextStyle(
-            color: Color.fromARGB(255, 248, 248, 248),
-            fontSize: 12,
-            height: 1.5,
-          ),
-          bodySmall: TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-          ),
-        ),
       ),
       // システムのテーマモードに合わせる
       themeMode: ThemeMode.system,
@@ -149,12 +85,16 @@ class MyStatefulWidget extends ConsumerStatefulWidget {
 //ホーム画面の動的な部分の状態を管理するWidget
 class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
     with TickerProviderStateMixin {
+  //スナックバーを表示するためのキー
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  //タブのコントローラー
   late TabController _tabController;
-  //ラベルのリストを読み込む
-
+  //テキストの編集のコントローラー
   final TextEditingController textFieldController = TextEditingController();
+  //ラベルの初期設定
   String label = "";
+
+  //タブコントローラーの初期設定
   @override
   void initState() {
     super.initState();
@@ -166,12 +106,14 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
     });
   }
 
+  //タブコントローラーの破棄
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
 
+  //ホーム画面の動的な部分を作成するWidget
   @override
   Widget build(BuildContext context) {
     Setting().size(context);
@@ -192,13 +134,17 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
       child: Scaffold(
         key: _scaffoldKey,
 
-        //タブバーとボタンを重ねる
+        //アプリバーの設定
         appBar: AppBar(
+          //アプリバーの高さをステータスバーから0の高さに設定
           titleSpacing: 0,
+
           title: PreferredSize(
+            //タブバーの高さを50に設定
             preferredSize: Size.fromHeight(50),
-            //画面上部にステータスバーを表示させるようにする
+            //リバーポッドに監視させる
             child: Consumer(builder: (context, ref, child) {
+              //タブバーを作成する
               return TabBar(
                 controller: _tabController,
                 tabs: tab,
@@ -211,41 +157,57 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
           ),
         ),
 
-        endDrawer: Drawer(child: Consumer(
+        //ドロワーを設定する
+        endDrawer: Drawer(
+            //リバーポッドに監視させる
+            child: Consumer(
           builder: (context, ref, child) {
+            //リストを生成する
             return ListView(
+              //リストの中身を作成する
               children: ListTile.divideTiles(
                 context: context,
                 tiles: [
+                  //ラベルを表示する
                   for (var i = 0; i < ref.watch(labelProvider).length; i++)
                     SizedBox(
                         child: ListTile(
-                            title: Text(ref.watch(labelProvider)[i],
-                                style: Theme.of(context).textTheme.labelMedium,),
+                            //ラベルを表示する
+                            title: Text(
+                              ref.watch(labelProvider)[i],
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
                             onTap: () {
+                              //ボタンを押すとタブを切り替える
                               _tabController.animateTo(i);
                               //メニューを閉じる
                               _scaffoldKey.currentState?.closeEndDrawer();
                             })),
+                  //ラベルを追加する
                   ListTile(
                     title: SizedBox(
                       height: y * 0.1,
                       child: Column(
                         children: [
+                          //大きさを指定する
                           Expanded(
                               child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            //テキストフィールドを作成する
                             child: TextField(
                               controller: textFieldController,
                               decoration: InputDecoration(
+                                //ラベルの表示をする
                                 label: Text(
                                   "ラベルを追加",
                                   style: TextStyle(color: Colors.grey),
                                 ),
+                                //丸角の枠線を作成する
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(3),
                                   borderSide: BorderSide(),
                                 ),
+                                //フォーカス時の枠線を作成する
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(3),
                                   borderSide: BorderSide(
@@ -253,18 +215,22 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                                   ),
                                 ),
                               ),
+                              //入力制限を設定する
                               inputFormatters: [
+                                // 英数字、ハイフン、アンダースコアのみ許可
                                 FilteringTextInputFormatter(
                                     RegExp(r'^[a-zA-Z0-9\-_]+$'),
-                                    allow: true), // 英数字、ハイフン、アンダースコアのみ許可
-                                LengthLimitingTextInputFormatter(
-                                    50), // 最大50文字まで入力可
+                                    allow: true),
+                                // 最大50文字まで入力可
+                                LengthLimitingTextInputFormatter(50),
                               ],
                               onChanged: (text) {
                                 label = text;
                               },
                             ),
                           )),
+
+                          //ボタンを押すとラベルを追加する
                           ElevatedButton(
                               onPressed: () {
                                 //Providerの更新
@@ -277,6 +243,8 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                         ],
                       ),
                     ),
+
+                    //余白を設定する
                     contentPadding: EdgeInsets.only(
                         top: (y * 0.9 -
                             (ref.watch(labelProvider).length + 1) *
@@ -300,40 +268,48 @@ class Home extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, watch) {
-    //ラベルに対して表示するインデックスを保存する
-
+    //たぶの中身を作成する
     return TabBarView(
       controller: tabCon,
       children: [
+        //全てのラベルに対して以下の動作を行う。
         for (int i = 0; i < ref.watch(labelProvider).length; i++)
+          //スクロールをできるようにする
           SingleChildScrollView(
+            //縦にコンテンツを並べる
             child: Column(
               children: [
-                //全てのラベルを表示する
                 Center(
                     child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (int j = 0; j < ref.watch(IssueProvider)["number"].length; j++)
-                    i==0 ?
-                      Parts().contentCard(
-                          context,
-                          j,
-                          ref.watch(IssueProvider)["number"][j],
-                          ref.watch(IssueProvider)["comments"][j],
-                          ref.watch(IssueProvider)["title"][j],
-                          ref.watch(IssueProvider)["createdAt"][j],
-                          ref.watch(IssueProvider)["body"][j])
-                          
-                          :ref.watch(IssueProvider)["label"][j].contains(ref.watch(labelProvider)[i])?
-                          Parts().contentCard(
-                          context,
-                          j,
-                          ref.watch(IssueProvider)["number"][j],
-                          ref.watch(IssueProvider)["comments"][j],
-                          ref.watch(IssueProvider)["title"][j],
-                          ref.watch(IssueProvider)["createdAt"][j],
-                          ref.watch(IssueProvider)["body"][j]):Container()
+                    //Issueの数だけ以下の動作を行う
+                    for (int j = 0;
+                        j < ref.watch(IssueProvider)["number"].length;
+                        j++)
+                      //ラベルがすべての時はすべてのIssueを表示する
+                      i == 0
+                          ? Parts().contentCard(
+                              context,
+                              j,
+                              ref.watch(IssueProvider)["number"][j],
+                              ref.watch(IssueProvider)["comments"][j],
+                              ref.watch(IssueProvider)["title"][j],
+                              ref.watch(IssueProvider)["createdAt"][j],
+                              ref.watch(IssueProvider)["body"][j])
+                          : ref
+                                  .watch(IssueProvider)["label"][j]
+                                  .contains(ref.watch(labelProvider)[i])
+                              //ラベルが全てではなく一致する時はそのラベルのIssueを表示する
+                              ? Parts().contentCard(
+                                  context,
+                                  j,
+                                  ref.watch(IssueProvider)["number"][j],
+                                  ref.watch(IssueProvider)["comments"][j],
+                                  ref.watch(IssueProvider)["title"][j],
+                                  ref.watch(IssueProvider)["createdAt"][j],
+                                  ref.watch(IssueProvider)["body"][j])
+                              : Container()
                   ],
                 )),
               ],

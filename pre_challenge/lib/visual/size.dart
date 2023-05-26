@@ -1,4 +1,4 @@
-import 'import.dart';
+import '../state/import.dart';
 
 //画面やUI全体に関わる設定を行うクラス
 class Setting {
