@@ -314,7 +314,8 @@ class Home extends ConsumerWidget {
                     child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (int j = 0; j < ref.watch(IssueProvider).length; j++)
+                    for (int j = 0; j < ref.watch(IssueProvider)["number"].length; j++)
+                    i==0 ?
                       Parts().contentCard(
                           context,
                           j,
@@ -322,7 +323,17 @@ class Home extends ConsumerWidget {
                           ref.watch(IssueProvider)["comments"][j],
                           ref.watch(IssueProvider)["title"][j],
                           ref.watch(IssueProvider)["createdAt"][j],
-                          ref.watch(IssueProvider)["body"][j]),
+                          ref.watch(IssueProvider)["body"][j])
+                          
+                          :ref.watch(IssueProvider)["label"][j].contains(ref.watch(labelProvider)[i])?
+                          Parts().contentCard(
+                          context,
+                          j,
+                          ref.watch(IssueProvider)["number"][j],
+                          ref.watch(IssueProvider)["comments"][j],
+                          ref.watch(IssueProvider)["title"][j],
+                          ref.watch(IssueProvider)["createdAt"][j],
+                          ref.watch(IssueProvider)["body"][j]):Container()
                   ],
                 )),
               ],

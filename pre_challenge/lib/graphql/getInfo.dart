@@ -39,7 +39,7 @@ class GraphQL {
 
     // 6. クエリを実行し、結果を取得
     final QueryResult result = await client.query(options);
-    
+
     if (result.hasException) {
       // エラーメッセージを表示
       print('GraphQL Error: ${result.exception.toString()}');
@@ -48,7 +48,6 @@ class GraphQL {
       final data = result.data!['repository']['issues']['nodes'];
 
       for (var issue in data) {
-        
         List labelList = [];
         //先ほど作成したMapにデータを格納
         for (var label in issue['labels']['nodes']) {
@@ -69,7 +68,7 @@ class GraphQL {
 
   final String getIssuesQuery = '''
     query GetIssues {
-      repository(owner: "flutter", name: "flutter") {
+      repository(owner: "Toma-0", name: "hakcathon_08") {
         issues(last: 100) {
           nodes {
             number
