@@ -2,6 +2,8 @@
 import 'package:pre_challenge/state/import.dart';
 import 'package:pre_challenge/state/setting.dart';
 import "graphql/getInfo.dart";
+import 'package:flutter/material.dart';
+import "parts/home_parts.dart";
 
 void main() {
   //flutterの初期化
@@ -21,17 +23,113 @@ class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context,ref) {
+  Widget build(BuildContext context, ref) {
     GraphQL().getIssues(ref);
+    Setting().size(context);
     return MaterialApp(
       // ライトモード用のテーマ
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        textTheme: const TextTheme(),
+        //アプリバーのテーマ
+        appBarTheme: AppBarTheme(
+          color: Color.fromARGB(255, 237, 237, 237),
+          elevation: 0,
+          iconTheme: IconThemeData(
+            color: Colors.black,
+          ),
+        ),
+
+        //アクセント部分のテーマ
+        primaryColor: Colors.blue,
+
+        //背景色のテーマ
+        canvasColor: Color.fromARGB(255, 237, 237, 237),
+        scaffoldBackgroundColor: Color.fromARGB(255, 237, 237, 237),
+        bottomAppBarTheme: BottomAppBarTheme(
+          color: Color.fromARGB(255, 237, 237, 237),
+        ),
+
+        //カードテーマ
+        cardTheme: CardTheme(
+          color: Colors.white,
+          shadowColor: Colors.black,
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          margin: EdgeInsets.all(Setting.w! * 0.02),
+        ),
+        textTheme: const TextTheme(
+          titleMedium: TextStyle(
+            color: Colors.black,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+          labelMedium: TextStyle(
+            color: Color.fromARGB(255, 70, 70, 70),
+            fontSize: 12,
+          ),
+          labelSmall: TextStyle(
+            color: Colors.black,
+            fontSize: 10,
+            wordSpacing: 1.5,
+          ),
+          bodyMedium: TextStyle(
+            color: Color.fromARGB(255, 124, 124, 124),
+            fontSize: 12,
+            height: 1.5,
+          ),
+          bodySmall: TextStyle(
+            color: Colors.black,
+            fontSize: 10,
+          ),
+        ),
       ),
       //ダーク用のテーマ
       darkTheme: ThemeData(
-        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: AppBarTheme(
+          color: Colors.black,
+          elevation: 0,
+          iconTheme: IconThemeData(
+            color: const Color.fromARGB(255, 255, 255, 255),
+          ),
+        ),
+
+        //アクセント部分のテーマ
+        primaryColor: Colors.blue,
+
+        //背景色のテーマ
+        canvasColor: const Color.fromARGB(255, 106, 106, 106),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 106, 106, 106),
+        bottomAppBarTheme: BottomAppBarTheme(color: const Color.fromARGB(255, 106, 106, 106)),
+
+        //カードの背景のテーマ
+        cardColor: Colors.black,
+
+        textTheme: const TextTheme(
+          titleMedium: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+          labelMedium: TextStyle(
+            color: Color.fromARGB(255, 245, 245, 245),
+            fontSize: 13
+          ),
+          labelSmall: TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            wordSpacing: 1.5,
+          ),
+          bodyMedium: TextStyle(
+            color: Color.fromARGB(255, 248, 248, 248),
+            fontSize: 12,
+            height: 1.5,
+          ),
+          bodySmall: TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+          ),
+        ),
       ),
       // システムのテーマモードに合わせる
       themeMode: ThemeMode.system,
@@ -76,7 +174,6 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
 
   @override
   Widget build(BuildContext context) {
-    
     Setting().size(context);
     double y = Setting.h!;
     //グラフQLを取得する
@@ -94,44 +191,23 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
       length: tab.length,
       child: Scaffold(
         key: _scaffoldKey,
-        backgroundColor: Color.fromARGB(255, 237, 237, 237),
-        //AppBarを生成しない
-        extendBodyBehindAppBar: true,
+
         //タブバーとボタンを重ねる
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          //画面上部にステータスバーを表示させるようにする
-          child: Padding(
-            padding: EdgeInsets.only(top: y * 0.02),
-            //タブバーとボタンを重ねる
-            child: Stack(
-              children: [
-                Consumer(builder: (context, ref, child) {
-                  return TabBar(
-                    controller: _tabController,
-                    tabs: tab,
-                    isScrollable: true,
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.black,
-                  );
-                }),
-                //設定ボタンを右上に表示させる
-                Align(
-                    alignment: AlignmentDirectional.topEnd,
-                    //背景色を設定する
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(255, 237, 237, 237),
-                      ),
-                      child: IconButton(
-                          onPressed: () {
-                            //メニューを開く
-                            _scaffoldKey.currentState?.openEndDrawer();
-                          },
-                          icon: Icon(Icons.menu)),
-                    ))
-              ],
-            ),
+        appBar: AppBar(
+          titleSpacing: 0,
+          title: PreferredSize(
+            preferredSize: Size.fromHeight(50),
+            //画面上部にステータスバーを表示させるようにする
+            child: Consumer(builder: (context, ref, child) {
+              return TabBar(
+                controller: _tabController,
+                tabs: tab,
+                isScrollable: true,
+                labelColor: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black,
+              );
+            }),
           ),
         ),
 
@@ -144,7 +220,8 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                   for (var i = 0; i < ref.watch(labelProvider).length; i++)
                     SizedBox(
                         child: ListTile(
-                            title: Text(ref.watch(labelProvider)[i]),
+                            title: Text(ref.watch(labelProvider)[i],
+                                style: Theme.of(context).textTheme.labelMedium,),
                             onTap: () {
                               _tabController.animateTo(i);
                               //メニューを閉じる
@@ -219,22 +296,39 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
 class Home extends ConsumerWidget {
   final WidgetRef ref;
   final TabController tabCon;
-  const Home(this.ref, this.tabCon, {Key? key}) : super(key: key);
+  Home(this.ref, this.tabCon, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, watch) {
-    return Consumer(builder: (context, watch, child) {
-      return TabBarView(controller: tabCon, children: [
+    //ラベルに対して表示するインデックスを保存する
+
+    return TabBarView(
+      controller: tabCon,
+      children: [
         for (int i = 0; i < ref.watch(labelProvider).length; i++)
-          Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(ref.watch(labelProvider)[i]),
-              Text(ref.watch(IssueProvider)["title"][i].toString()),
-            ],
-          )),
-      ]);
-    });
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                //全てのラベルを表示する
+                Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (int j = 0; j < ref.watch(IssueProvider).length; j++)
+                      Parts().contentCard(
+                          context,
+                          j,
+                          ref.watch(IssueProvider)["number"][j],
+                          ref.watch(IssueProvider)["comments"][j],
+                          ref.watch(IssueProvider)["title"][j],
+                          ref.watch(IssueProvider)["createdAt"][j],
+                          ref.watch(IssueProvider)["body"][j]),
+                  ],
+                )),
+              ],
+            ),
+          )
+      ],
+    );
   }
 }

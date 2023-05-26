@@ -31,18 +31,24 @@ final labelProvider =
 //表示するコンテンツが含まれているFutureProvider
 class IssueNotifier extends Notifier<Map> {
   @override
-  Map build() =>
-      {"number": [], "title": [], "body": [], "author": [], "comments": []};
+  Map build() => {
+        "label": [],
+        "number": [],
+        "title": [],
+        "body": [],
+        "createdAt": [],
+        "comments": []
+      };
 
   void addIssues(Map Issues) {
     Map<String, dynamic> newMap = {};
+
     state.forEach((key, value) {
       newMap[key] = Issues[key];
     });
 
     state = newMap;
   }
-
 }
 
 final IssueProvider =
