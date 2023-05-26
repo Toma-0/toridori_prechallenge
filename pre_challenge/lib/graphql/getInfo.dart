@@ -10,17 +10,16 @@ class GraphQL {
     );
 
     // 2. アクセストークンを指定して認証リンクを作成
-    String token=Token.token;
-    final AuthLink authLink = AuthLink(
-        getToken: () async =>
-            'Bearer $token');
+    String token = Token.token;
+    final AuthLink authLink = AuthLink(getToken: () async => 'Bearer $token');
 
     //後ほど使用するMapを作成
     Map<String, List<dynamic>> mapData = {
+      "label": [],
       "number": [],
       "title": [],
       "body": [],
-      "author": [],
+      "createdAt": [],
       "comments": [],
     };
 
@@ -40,7 +39,7 @@ class GraphQL {
 
     // 6. クエリを実行し、結果を取得
     final QueryResult result = await client.query(options);
-    print(result.data);
+    
     if (result.hasException) {
       // エラーメッセージを表示
       print('GraphQL Error: ${result.exception.toString()}');
@@ -49,32 +48,40 @@ class GraphQL {
       final data = result.data!['repository']['issues']['nodes'];
 
       for (var issue in data) {
+        
+        List labelList = [];
         //先ほど作成したMapにデータを格納
+        for (var label in issue['labels']['nodes']) {
+          labelList.add(label["name"]);
+        }
+
+        mapData["label"]!.add(labelList);
         mapData["number"]!.add(issue['number']);
         mapData["title"]!.add(issue['title']);
         mapData["body"]!.add(issue['body']);
-        mapData["author"]!.add(issue['author']['login']);
+        mapData["createdAt"]!.add(issue['createdAt']);
         mapData["comments"]!.add(issue['comments']['nodes']);
       }
-
       //取得したデータをProviderに格納
       ref.read(IssueProvider.notifier).addIssues(mapData);
-      print(ref.read(IssueProvider));
     }
   }
 
   final String getIssuesQuery = '''
     query GetIssues {
       repository(owner: "flutter", name: "flutter") {
-        issues(first: 10) {
+        issues(last: 100) {
           nodes {
             number
             title
             body
-            author {
-              login
+            createdAt
+            labels(first: 100) {
+              nodes {
+                name
+              }
             }
-            comments(first: 10) {
+            comments(first: 100) {
               nodes {
                 body
               }
