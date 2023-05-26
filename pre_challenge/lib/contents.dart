@@ -127,7 +127,7 @@ class Contents extends ConsumerWidget {
                     Padding(
                       padding: EdgeInsets.only(left: Setting.w! * 0.01),
                       child: Text(
-                        "${comments.length.toString()} comments",
+                        "${comments.length.toString()} comments"",}",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),

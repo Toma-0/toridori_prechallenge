@@ -1,10 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'import.dart';
 
-//ラベルが格納されているStateProvider
-
+//ラベルが格納されているLabelNotifier
 class LabelNotifier extends Notifier<List> {
   @override
+  //初期値を設定
   List build() => [
         "全て",
         "p: webview",
@@ -14,22 +14,25 @@ class LabelNotifier extends Notifier<List> {
         "p: share"
       ];
 
+  //ラベルを追加する
   void addLabel(String label) {
     state = [...state, label];
   }
 
+  //ラベルを削除する
   void removeLabel(String label) {
     state = state.where((element) => element != label).toList();
   }
 }
 
+//ラベルが格納されているlabelProvider
 final labelProvider =
     NotifierProvider<LabelNotifier, List>(() => LabelNotifier());
 
-//お気に入りが格納されているStateNotiferProvider
-
-//表示するコンテンツが含まれているFutureProvider
+//表示すIssueが含まれている Notifierrovider
 class IssueNotifier extends Notifier<Map> {
+
+  //初期値を設定
   @override
   Map build() => {
         "label": [],
@@ -40,6 +43,7 @@ class IssueNotifier extends Notifier<Map> {
         "comments": []
       };
 
+  //Issueを追加する
   void addIssues(Map Issues) {
     Map<String, dynamic> newMap = {};
 
@@ -51,5 +55,10 @@ class IssueNotifier extends Notifier<Map> {
   }
 }
 
+//Issueが格納されているIssueProvider
 final IssueProvider =
     NotifierProvider<IssueNotifier, Map>(() => IssueNotifier());
+
+
+//お気に入りが格納されているStateNotiferProvider
+

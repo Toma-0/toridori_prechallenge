@@ -66,6 +66,7 @@ class GraphQL {
     }
   }
 
+//クエリを指定
   final String getIssuesQuery = '''
     query GetIssues {
       repository(owner: "Toma-0", name: "hakcathon_08") {
