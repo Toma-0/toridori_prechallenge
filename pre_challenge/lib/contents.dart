@@ -10,13 +10,13 @@ class Contents extends ConsumerWidget {
   @override
   Widget build(context, ref) {
     Setting().size(context);
-    var Issue = ref.watch(IssueProvider);
+    var issue = ref.watch(issueProvider);
 
-    var number = Issue["number"]![index];
-    var title = Issue["title"]![index];
-    var body = Issue["body"]![index];
-    var createdAt = Issue["createdAt"]![index];
-    var comments = Issue["comments"]![index];
+    var number = issue["number"]![index];
+    var title = issue["title"]![index];
+    var body = issue["body"]![index];
+    var createdAt = issue["createdAt"]![index];
+    var comments = issue["comments"]![index];
 
     RegExp regex = RegExp(r'^(\d{4})-(\d{2})-(\d{2})');
     RegExpMatch? match = regex.firstMatch(createdAt);
@@ -69,7 +69,7 @@ class Contents extends ConsumerWidget {
               padding: EdgeInsets.symmetric(vertical: Setting.w! * 0.01),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.green),
+                  const Icon(Icons.info_outline, color: Colors.green),
                   Padding(
                     padding: EdgeInsets.only(left: Setting.w! * 0.01),
                     child: SizedBox(
@@ -89,8 +89,8 @@ class Contents extends ConsumerWidget {
                     //角丸にする
                     borderRadius: BorderRadius.circular(Setting.w! * 0.01),
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? Color.fromARGB(255, 81, 107, 125)
-                        : Color.fromARGB(255, 236, 247, 255)),
+                        ? const Color.fromARGB(255, 81, 107, 125)
+                        : const Color.fromARGB(255, 236, 247, 255)),
                 child: Padding(
                     padding: EdgeInsets.all(Setting.w! * 0.01),
                     child: Text(
@@ -133,7 +133,7 @@ class Contents extends ConsumerWidget {
                     ),
                   ],
                 ),),
-                for (var i = 0; i < Issue["comments"]!.length; i++)
+                for (var i = 0; i < issue["comments"]!.length; i++)
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Setting.h! * 0.01),
                     child: DecoratedBox(
@@ -145,7 +145,7 @@ class Contents extends ConsumerWidget {
                         padding:
                             EdgeInsets.all(Setting.h! * 0.01),
                         child: Text(
-                          Issue["comments"]![i].toString(),
+                          issue["comments"]![i].toString(),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),

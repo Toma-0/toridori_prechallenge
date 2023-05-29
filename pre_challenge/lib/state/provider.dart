@@ -44,11 +44,11 @@ class IssueNotifier extends Notifier<Map> {
       };
 
   //Issueを追加する
-  void addIssues(Map Issues) {
+  void addIssues(Map issues) {
     Map<String, dynamic> newMap = {};
 
     state.forEach((key, value) {
-      newMap[key] = Issues[key];
+      newMap[key] = issues[key];
     });
 
     state = newMap;
@@ -56,7 +56,7 @@ class IssueNotifier extends Notifier<Map> {
 }
 
 //Issueが格納されているIssueProvider
-final IssueProvider =
+final issueProvider =
     NotifierProvider<IssueNotifier, Map>(() => IssueNotifier());
 
 

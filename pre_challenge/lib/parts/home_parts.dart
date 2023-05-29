@@ -6,11 +6,12 @@ class Parts {
   List<Widget> labelBar(list, context) {
     //タブのリストを作成する
     final List<Widget> tabs = <Tab>[];
-    for (var i = 0; i < list.length; i++)
+    for (var i = 0; i < list.length; i++) {
       //ラベルを表示するパーツを作成する
       tabs.add(Tab(
         text: list[i],
       ));
+    }
 
     return tabs;
   }
@@ -78,7 +79,7 @@ class Parts {
             child: Row(
               children: [
                 //アイコンを表示する
-                Icon(Icons.info_outline, color: Colors.green),
+                const Icon(Icons.info_outline, color: Colors.green),
                 Padding(
                   padding: EdgeInsets.only(left: Setting.w! * 0.01),
                   //テキストを幅を指定して表示する
@@ -100,8 +101,8 @@ class Parts {
                   //角丸にする
                   borderRadius: BorderRadius.circular(Setting.w! * 0.01),
                   color: Theme.of(context).brightness == Brightness.dark
-                      ? Color.fromARGB(255, 81, 107, 125)
-                      : Color.fromARGB(255, 236, 247, 255)),
+                      ? const Color.fromARGB(255, 81, 107, 125)
+                      : const Color.fromARGB(255, 236, 247, 255)),
               //本文を表示する
               child: Padding(
                   padding: EdgeInsets.all(Setting.w! * 0.01),
