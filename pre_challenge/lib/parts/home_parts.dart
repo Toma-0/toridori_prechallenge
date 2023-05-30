@@ -18,7 +18,7 @@ class Parts {
 
 //コンテンツを表示するパーツを作成する
   Widget contentCard(
-      context, int index, number, List comments, title, createdAt, body) {
+      ref, context, int index, number, List comments, title, createdAt, body) {
     Setting().size(context);
 
     ///日付を取得する
@@ -27,6 +27,7 @@ class Parts {
     late String? year;
     late String? month;
     late String? day;
+    late OverlayEntry overlayEntry;
 
     if (match != null) {
       year = match.group(1);
@@ -137,13 +138,15 @@ class Parts {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Contents(index: index)),
+
+                    Overlay.of(context).insert(
+                       overlayEntry = OverlayEntry(builder: (context) {
+                        return Contents().consumers(
+                            context,index,ref,overlayEntry);
+                      }),
                     );
                   },
-                  //ボタンのテキストを表示する
+                  //ボタンのテキストを表示す
                   child: Text(
                     "View full issue",
                     style: Theme.of(context).textTheme.bodyMedium,

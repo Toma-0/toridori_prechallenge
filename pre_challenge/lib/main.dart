@@ -22,7 +22,19 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    //getinfoが情報を得るまでの間はローディングを表示する
+  FutureBuilder
+      //グラフQLを取得する
+      getinfo = FutureBuilder(
+    future: GraphQL().getIssues(ref),
+    builder: (context, snapshot) {
+      //データが取得できたら
+      if (snapshot.hasData) {
+        //ホーム画面を表示する
+       
+      
     GraphQL().getIssues(ref);
+
     Setting().size(context);
     ThemaText().lightThemeText(context);
     ThemaText().darkThemeText(context);
@@ -45,7 +57,7 @@ class MyApp extends ConsumerWidget {
         //ウィジェットの背景色
         canvasColor: const Color.fromARGB(255, 237, 237, 237),
         //全体の背景色
-        scaffoldBackgroundColor:const Color.fromARGB(255, 237, 237, 237),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 237, 237, 237),
       ),
 
       //ダーク用のテーマ
@@ -69,6 +81,15 @@ class MyApp extends ConsumerWidget {
       themeMode: ThemeMode.system,
       home: const MyStatefulWidget(),
     );
+
+    } else {
+        //ローディングを表示する
+        return const Center(child: CircularProgressIndicator());
+      }
+
+    },
+  );
+  return getinfo;
   }
 }
 
@@ -112,6 +133,7 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   }
 
   //ホーム画面の動的な部分を作成するWidget
+
   @override
   Widget build(BuildContext context) {
     Setting().size(context);
@@ -190,7 +212,8 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                           //大きさを指定する
                           Expanded(
                               child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             //テキストフィールドを作成する
                             child: TextField(
                               controller: textFieldController,
@@ -237,7 +260,7 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                                     .addLabel(label);
                                 textFieldController.clear();
                               },
-                              child:const Text("追加")),
+                              child: const Text("追加")),
                         ],
                       ),
                     ),
@@ -288,6 +311,7 @@ class Home extends ConsumerWidget {
                       //ラベルがすべての時はすべてのIssueを表示する
                       i == 0
                           ? Parts().contentCard(
+                              ref,
                               context,
                               j,
                               ref.watch(issueProvider)["number"][j],
@@ -300,6 +324,7 @@ class Home extends ConsumerWidget {
                                   .contains(ref.watch(labelProvider)[i])
                               //ラベルが全てではなく一致する時はそのラベルのIssueを表示する
                               ? Parts().contentCard(
+                                  ref,
                                   context,
                                   j,
                                   ref.watch(issueProvider)["number"][j],
@@ -310,6 +335,12 @@ class Home extends ConsumerWidget {
                               : Container()
                   ],
                 )),
+                ElevatedButton(
+                    onPressed: () {
+                      ref.read(queryProvider.notifier).push();
+                      GraphQL().getIssues(ref);
+                    },
+                    child: const Text("追加")),
               ],
             ),
           )

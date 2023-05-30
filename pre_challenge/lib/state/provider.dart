@@ -31,7 +31,6 @@ final labelProvider =
 
 //表示すIssueが含まれている Notifierrovider
 class IssueNotifier extends Notifier<Map> {
-
   //初期値を設定
   @override
   Map build() => {
@@ -48,7 +47,7 @@ class IssueNotifier extends Notifier<Map> {
     Map<String, dynamic> newMap = {};
 
     state.forEach((key, value) {
-      newMap[key] = issues[key];
+      newMap[key] = [...value, ...issues[key]];
     });
 
     state = newMap;
@@ -59,6 +58,42 @@ class IssueNotifier extends Notifier<Map> {
 final issueProvider =
     NotifierProvider<IssueNotifier, Map>(() => IssueNotifier());
 
+class QueryNotifier extends Notifier<Map> {
+  @override
+  Map build() => {
+        "push":true,
+        "first": true,
+        "repoName": "flutter",
+        "owner": "flutter",
+        "issueCursor": "",
+        "issueNumberInPage": 0,
+      };
+
+  void infoQuery(endCursor, hasNextPage) {
+    state = {
+      "push":false,
+      "first": false,
+      "repoName": state["repoName"],
+      "owner": state["owner"],
+      "issueCursor": endCursor,
+      "issueNumberInPage": hasNextPage ?? 0,
+    };
+  }
+
+  void push(){
+    state = {
+      "push":true,
+      "first": false,
+      "repoName": state["repoName"],
+      "owner": state["owner"],
+      "issueCursor": state["issueCursor"],
+      "issueNumberInPage": state["issueNumberInPage"],
+    };
+  }
+}
+
+final queryProvider =
+    NotifierProvider<QueryNotifier, Map>(() => QueryNotifier());
 
 //お気に入りが格納されているStateNotiferProvider
 

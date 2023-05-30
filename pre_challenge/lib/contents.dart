@@ -1,14 +1,8 @@
 import 'state/import.dart';
 
 //コンテンツページ
-class Contents extends ConsumerWidget {
-  final int index;
-
-  // コンストラクタ
-  const Contents({Key? key, required this.index}) : super(key: key);
-
-  @override
-  Widget build(context, ref) {
+class Contents {
+  Widget consumers(context, index, ref, overlayEntry) {
     Setting().size(context);
     var issue = ref.watch(issueProvider);
 
@@ -29,8 +23,16 @@ class Contents extends ConsumerWidget {
       month = match.group(2);
       day = match.group(3);
     }
-    return Scaffold(
-        body: SingleChildScrollView(
+    return Stack(
+    children: [
+      // オーバーレイの背景に透明なGestureDetectorを配置
+      Positioned.fill(
+        child: GestureDetector(
+          onTap: () {
+            // タップされたときにオーバーレイを閉じる
+            overlayEntry.remove();
+          },
+          child:SingleChildScrollView(
       child: Card(
           child: Padding(
         padding: EdgeInsets.all(Setting.w! * 0.01),
@@ -112,27 +114,29 @@ class Contents extends ConsumerWidget {
             ),
             Column(
               children: [
-                
-                Padding(padding: EdgeInsets.only(top:Setting.h! * 0.01),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.comment,
-                      size: Setting.w! * 0.02,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: Setting.w! * 0.01),
-                      child: Text(
-                        "${comments.length.toString()} comments"",}",
-                        style: Theme.of(context).textTheme.bodySmall,
+                Padding(
+                  padding: EdgeInsets.only(top: Setting.h! * 0.01),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.comment,
+                        size: Setting.w! * 0.02,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
                       ),
-                    ),
-                  ],
-                ),),
+                      Padding(
+                        padding: EdgeInsets.only(left: Setting.w! * 0.01),
+                        child: Text(
+                          "${comments.length.toString()} comments",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (comments.length != 0)
                 for (var i = 0; i < issue["comments"]!.length; i++)
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: Setting.h! * 0.01),
@@ -142,20 +146,31 @@ class Contents extends ConsumerWidget {
                         border: Border.all(color: Colors.grey, width: 1),
                       ),
                       child: Padding(
-                        padding:
-                            EdgeInsets.all(Setting.h! * 0.01),
+                        padding: EdgeInsets.all(Setting.h! * 0.01),
                         child: Text(
-                          issue["comments"]![i].toString(),
+                          issue["comments"][i].toString(),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                     ),
                   ),
               ],
-            )
+            ),
+            TextButton(
+                onPressed: () {
+                  overlayEntry.remove();
+                },
+                child: Text(
+                  "閉じる",
+                  style: Theme.of(context).textTheme.labelMedium,
+                )),
           ],
         ),
       )),
-    ));
+          )
+        )
+      )
+    ],
+    );
   }
 }
