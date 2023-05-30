@@ -44,13 +44,13 @@ class WidgetTheme {
       color: Colors.black,
       elevation: 0,
       iconTheme: IconThemeData(
-        color: const Color.fromARGB(255, 255, 255, 255),
+        color: Color.fromARGB(255, 255, 255, 255),
       ),
     );
 
     //ボトムアプリバーの暗い時のテーマ
     bottomAppBarDarkTheme = const BottomAppBarTheme(
-        color: const Color.fromARGB(255, 106, 106, 106));
+        color: Color.fromARGB(255, 106, 106, 106));
     
     //カードの暗い時のテーマ
     cardDarkTheme = CardTheme(

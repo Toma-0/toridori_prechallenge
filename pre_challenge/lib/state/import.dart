@@ -11,5 +11,8 @@ export "package:flutter/services.dart";
 
 //マテリアルデザイン関連
 
-export 'package:pre_challenge/visual/widgetTheme.dart';
-export 'package:pre_challenge/visual/textTheme.dart';
+export 'package:pre_challenge/visual/widget_theme.dart';
+export 'package:pre_challenge/visual/text_theme.dart';
+
+//ログを出力
+export 'package:logger/logger.dart';

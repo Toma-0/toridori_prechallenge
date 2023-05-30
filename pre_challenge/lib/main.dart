@@ -1,8 +1,6 @@
 //importするものをまとめているファイルをインポート
 import 'package:pre_challenge/state/import.dart';
-import 'package:pre_challenge/visual/size.dart';
-import "graphql/getInfo.dart";
-import 'package:flutter/material.dart';
+import 'graphql/get_info.dart';
 import "parts/home_parts.dart";
 
 void main() {
@@ -24,7 +22,19 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    //getinfoが情報を得るまでの間はローディングを表示する
+  FutureBuilder
+      //グラフQLを取得する
+      getinfo = FutureBuilder(
+    future: GraphQL().getIssues(ref),
+    builder: (context, snapshot) {
+      //データが取得できたら
+      if (snapshot.hasData) {
+        //ホーム画面を表示する
+       
+      
     GraphQL().getIssues(ref);
+
     Setting().size(context);
     ThemaText().lightThemeText(context);
     ThemaText().darkThemeText(context);
@@ -45,9 +55,9 @@ class MyApp extends ConsumerWidget {
         //アクセント部分の背景色
         primaryColor: Colors.blue,
         //ウィジェットの背景色
-        canvasColor: Color.fromARGB(255, 237, 237, 237),
+        canvasColor: const Color.fromARGB(255, 237, 237, 237),
         //全体の背景色
-        scaffoldBackgroundColor: Color.fromARGB(255, 237, 237, 237),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 237, 237, 237),
       ),
 
       //ダーク用のテーマ
@@ -71,6 +81,15 @@ class MyApp extends ConsumerWidget {
       themeMode: ThemeMode.system,
       home: const MyStatefulWidget(),
     );
+
+    } else {
+        //ローディングを表示する
+        return const Center(child: CircularProgressIndicator());
+      }
+
+    },
+  );
+  return getinfo;
   }
 }
 
@@ -114,6 +133,7 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
   }
 
   //ホーム画面の動的な部分を作成するWidget
+
   @override
   Widget build(BuildContext context) {
     Setting().size(context);
@@ -141,7 +161,7 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
 
           title: PreferredSize(
             //タブバーの高さを50に設定
-            preferredSize: Size.fromHeight(50),
+            preferredSize: const Size.fromHeight(50),
             //リバーポッドに監視させる
             child: Consumer(builder: (context, ref, child) {
               //タブバーを作成する
@@ -192,25 +212,26 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                           //大きさを指定する
                           Expanded(
                               child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             //テキストフィールドを作成する
                             child: TextField(
                               controller: textFieldController,
                               decoration: InputDecoration(
                                 //ラベルの表示をする
-                                label: Text(
+                                label: const Text(
                                   "ラベルを追加",
                                   style: TextStyle(color: Colors.grey),
                                 ),
                                 //丸角の枠線を作成する
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(3),
-                                  borderSide: BorderSide(),
+                                  borderSide: const BorderSide(),
                                 ),
                                 //フォーカス時の枠線を作成する
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(3),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: Colors.blue,
                                   ),
                                 ),
@@ -239,7 +260,7 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
                                     .addLabel(label);
                                 textFieldController.clear();
                               },
-                              child: Text("追加")),
+                              child: const Text("追加")),
                         ],
                       ),
                     ),
@@ -264,10 +285,10 @@ class MyStatefulWidgetState extends ConsumerState<MyStatefulWidget>
 class Home extends ConsumerWidget {
   final WidgetRef ref;
   final TabController tabCon;
-  Home(this.ref, this.tabCon, {Key? key}) : super(key: key);
+  const Home(this.ref, this.tabCon, {Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, watch) {
+  Widget build(BuildContext context, ref) {
     //たぶの中身を作成する
     return TabBarView(
       controller: tabCon,
@@ -285,33 +306,41 @@ class Home extends ConsumerWidget {
                   children: [
                     //Issueの数だけ以下の動作を行う
                     for (int j = 0;
-                        j < ref.watch(IssueProvider)["number"].length;
+                        j < ref.watch(issueProvider)["number"].length;
                         j++)
                       //ラベルがすべての時はすべてのIssueを表示する
                       i == 0
                           ? Parts().contentCard(
+                              ref,
                               context,
                               j,
-                              ref.watch(IssueProvider)["number"][j],
-                              ref.watch(IssueProvider)["comments"][j],
-                              ref.watch(IssueProvider)["title"][j],
-                              ref.watch(IssueProvider)["createdAt"][j],
-                              ref.watch(IssueProvider)["body"][j])
+                              ref.watch(issueProvider)["number"][j],
+                              ref.watch(issueProvider)["comments"][j],
+                              ref.watch(issueProvider)["title"][j],
+                              ref.watch(issueProvider)["createdAt"][j],
+                              ref.watch(issueProvider)["body"][j])
                           : ref
-                                  .watch(IssueProvider)["label"][j]
+                                  .watch(issueProvider)["label"][j]
                                   .contains(ref.watch(labelProvider)[i])
                               //ラベルが全てではなく一致する時はそのラベルのIssueを表示する
                               ? Parts().contentCard(
+                                  ref,
                                   context,
                                   j,
-                                  ref.watch(IssueProvider)["number"][j],
-                                  ref.watch(IssueProvider)["comments"][j],
-                                  ref.watch(IssueProvider)["title"][j],
-                                  ref.watch(IssueProvider)["createdAt"][j],
-                                  ref.watch(IssueProvider)["body"][j])
+                                  ref.watch(issueProvider)["number"][j],
+                                  ref.watch(issueProvider)["comments"][j],
+                                  ref.watch(issueProvider)["title"][j],
+                                  ref.watch(issueProvider)["createdAt"][j],
+                                  ref.watch(issueProvider)["body"][j])
                               : Container()
                   ],
                 )),
+                ElevatedButton(
+                    onPressed: () {
+                      ref.read(queryProvider.notifier).push();
+                      GraphQL().getIssues(ref);
+                    },
+                    child: const Text("追加")),
               ],
             ),
           )

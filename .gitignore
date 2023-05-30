@@ -26,5 +26,5 @@ pre_challenge/*.js.map
 pre_challenge/.flutter-plugins
 pre_challenge/.flutter-plugins-dependencies
 
-pre_challenge/lib/graphql/accessToken.dart
+pre_challenge/lib/graphql/access_token.dart
 
